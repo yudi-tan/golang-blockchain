@@ -11,7 +11,7 @@ import (
 
 // Mining Difficulty, represents the number of leading 0's in the final hash of a block, changes from time to time.
 // For simplicity sake, won't implement target adjusting algorithm, only use a constant.
-const targetBits = 24
+const targetBits = 20
 const maxNonce = math.MaxInt64
 
 // Proof Of Work struct encapsulating a block and the target it must achieve to be considered valid.
@@ -23,7 +23,7 @@ type ProofOfWork struct {
 // Initialize a new proof
 // 256 is length of sha-256 hash in bits
 // By shifting our target left by targetBits, we can then check for every subsequent block hash if the blockhash is less than
-// this target (shifting left by 24 results in a large number). We only allow block hashes which are smaller than this target to be considered valid.
+// this target (shifting left by targetBits results in a large number). We only allow block hashes which are smaller than this target to be considered valid.
 // Lowering the target (i.e. an upper bound on validity of block hash) will result in fewer valid numbers, and thus increasing the difficulty of PoW.
 func NewProofOfWork(b *Block) *ProofOfWork {
 	target := big.NewInt(1)
