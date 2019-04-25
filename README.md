@@ -1,5 +1,16 @@
 # Golang Blockchain
 
+## Learning Goal:
+Understanding what a blockchain is from a pure data-structures perspective is not difficult. It is very
+similar to a linked-list where the head of the link-list is the newest block and each block has a pointer
+to the previous block. However, understanding how a blockchain functions as a distributed ledger is much more difficult.
+In order to function as a distributed ledger / DB, there needs to be persistence, replication, communication as well as 
+byzantine fault tolerant consensus mechanism. I've had experience building higher-level dapps 
+with smart-contracts, but i've always wanted to understand the inner-workings of an
+actual blockchain. Hence, this personal project aims to help me fulfill this knowledge gap,
+where I hope to learn more about distributed-networking, persistence as well as the transaction-model (as opposed to account-based models)
+through implementing a simplified version of the Bitcoin Core blockchain in golang.
+
 ## Usage via [CLI](cli/cli.go):
 1. Compile the code using go build, should return an executable named "go-blockchain"
 2. To print the current blockchain's blocks, run "./go-blockchain printchain"
