@@ -1,6 +1,6 @@
 # Golang Blockchain
 
-## Usage via CLI:
+## Usage via [CLI](cli/cli.go):
 1. Compile the code using go build, should return an executable named "go-blockchain"
 2. To print the current blockchain's blocks, run "./go-blockchain printchain"
 3. To add a new block to the blockchain, run "./go-blockchain addblock -data "your transaction details here"
@@ -10,7 +10,7 @@ reset blockchain to a fresh chain, just delete "blockchain.db" file.
 
 
 ## Basic Data types
-### Block
+### [Block](blockchain/block.go)
 - Timestamp (Unix timestamp of transaction time)
 - Data (Raw data of what is being transacted)
 - PreviousHash (Hash of the previous block in the blockchain)
@@ -18,14 +18,14 @@ reset blockchain to a fresh chain, just delete "blockchain.db" file.
 - Hash (Hash of the above 4 attributes)
 - Has method NewBlock that will create a new block struct. 
 
-### Blockchain
+### [Blockchain](blockchain/blockchain.go)
 - Essentially a slice of blocks
 - When initialized, creates a genesis block that is the first block in the slice.
 - Has method AddBlock that will append a new block to the blockchain.
 
 ## Core Algorithm
 
-### Proof of Work
+### [Proof of Work](blockchain/pow.go)
 - Packaged as a struct which consists of a block and the target (upper bound for which
  the block's hash is considered valid)
 - Has method Run() that will run actual PoW algorithm, incrementing the nonce each iteration until
