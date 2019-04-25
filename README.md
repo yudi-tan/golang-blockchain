@@ -7,7 +7,7 @@ to the previous block. However, understanding how a blockchain functions as a di
 In order to function as a distributed ledger / DB, there needs to be persistence, replication, communication as well as 
 byzantine fault tolerant consensus mechanism. I've had experience building higher-level dapps 
 with smart-contracts, but i've always wanted to understand the inner-workings of an
-actual blockchain. Hence, this personal project aims to help me fulfill this knowledge gap,
+actual blockchain. Hence, this personal project aims to help me fill this knowledge gap,
 where I hope to learn more about distributed-networking, persistence as well as the transaction-model (as opposed to account-based models)
 through implementing a simplified version of the Bitcoin Core blockchain in golang.
 
