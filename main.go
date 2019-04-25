@@ -1,24 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"github.com/yuditan/go-blockchain/blockchain"
-	"strconv"
+	cli2 "github.com/yuditan/go-blockchain/cli"
 )
 
 func main() {
 	bc := blockchain.NewBlockchain()
+	defer bc.Db.Close()
 
-	bc.AddBlock("Sending 1 BTC to Yudi")
+	cli := cli2.CLI{bc}
 
-	for _, block := range bc.Blocks {
-		fmt.Printf("Prev. hash: %x\n", block.PrevBlockHash)
-		fmt.Printf("Data: %s\n", block.Data)
-		fmt.Printf("Hash: %x\n", block.Hash)
+	cli.Run()
 
-
-		pow := blockchain.NewProofOfWork(block)
-		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
-		fmt.Println()
-	}
 }

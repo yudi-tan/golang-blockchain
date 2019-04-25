@@ -12,14 +12,14 @@ const blocksBucket = "blocks"
 // Our blockchain struct is just a slice of blocks defined in block.go
 type Blockchain struct {
 	tip []byte
-	db *bolt.DB
+	Db *bolt.DB
 }
 
 // Appending a block to our blockchain instance
 func (bc *Blockchain) AddBlock(data string) {
 	var lastHash []byte
 
-	err := bc.db.View(func(tx *bolt.Tx) error {
+	err := bc.Db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(blocksBucket))
 		lastHash = b.Get([]byte("l"))
 
@@ -32,7 +32,7 @@ func (bc *Blockchain) AddBlock(data string) {
 
 	newBlock := NewBlock(data, lastHash)
 
-	err = bc.db.Update(func(tx *bolt.Tx) error {
+	err = bc.Db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(blocksBucket))
 		err := b.Put(newBlock.Hash, newBlock.Serialize())
 		if err != nil {
@@ -75,6 +75,7 @@ func NewBlockchain() *Blockchain {
 		b := tx.Bucket([]byte(blocksBucket))
 
 		if b == nil {
+			fmt.Println("No existing blockchain found. Creating a new one...")
 			genesis := NewGenesisBlock()
 			b, err := tx.CreateBucket([]byte(blocksBucket))
 			if err != nil {
@@ -104,6 +105,6 @@ func NewBlockchain() *Blockchain {
 
 // Returns an iterator for the blockchain, where the iterator first points to the tip (i.e. newest block).
 func (bc *Blockchain) Iterator() *BlockchainIterator{
-	bci := &BlockchainIterator{bc.tip, bc.db}
+	bci := &BlockchainIterator{bc.tip, bc.Db}
 	return bci
 }
