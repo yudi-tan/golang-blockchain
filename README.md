@@ -1,5 +1,14 @@
 # Golang Blockchain
 
+## Usage via CLI:
+1. Compile the code using go build, should return an executable named "go-blockchain"
+2. To print the current blockchain's blocks, run "./go-blockchain printchain"
+3. To add a new block to the blockchain, run "./go-blockchain addblock -data "your transaction details here"
+4. For more detailed usage on the CLI, just run the executable "./go-blockchain"
+5. Since boltDB is used, data in the blockchain will persist as long as the "blockchain.db" file is untouched. To
+reset blockchain to a fresh chain, just delete "blockchain.db" file.
+
+
 ## Basic Data types
 ### Block
 - Timestamp (Unix timestamp of transaction time)
