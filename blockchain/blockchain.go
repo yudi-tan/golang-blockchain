@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"encoding/hex"
 	"fmt"
 	"github.com/boltdb/bolt"
 	"github.com/yuditan/go-blockchain/transaction"
@@ -68,8 +69,8 @@ func dbExists() bool {
 	return true
 }
 
-// NewBlockchain connects to DB and finds the blockchain, then creates the blockchain instance for this new session so that subsequent blocks can be appended to the same chain.
-func NewBlockchain() *Blockchain {
+// ContinueBlockchain connects to DB and finds the blockchain, then creates the blockchain instance for this new session so that subsequent blocks can be appended to the same chain.
+func ContinueBlockchain() *Blockchain {
 	if dbExists() == false {
 		fmt.Println("No existing blockchain found. Create one first.")
 		os.Exit(1)
@@ -147,4 +148,67 @@ func CreateBlockchain(address string) *Blockchain {
 func (bc *Blockchain) Iterator() *BlockchainIterator{
 	bci := &BlockchainIterator{bc.tip, bc.Db}
 	return bci
+}
+
+func (bc *Blockchain) FindUnspentTransactions(address string) []transaction.Transaction {
+	var unspentTXs []transaction.Transaction
+	// map from id of transaction -> list of indices for which the output in this transaction is spent
+	spentTXOs := make(map[string][]int)
+	bci := bc.Iterator()
+
+	for {
+		block := bci.Next()
+
+		for _, tx := range block.Transactions {
+			txID := hex.EncodeToString(tx.ID)
+
+			Outputs:
+				for outIdx, out := range tx.Vout {
+					// Check to see if current output has been spent
+					if spentTXOs[txID] != nil {
+						for _, spentOut := range spentTXOs[txID] {
+							// If this output is spent, we move on to the next output
+							if spentOut == outIdx {
+								continue Outputs
+							}
+						}
+					}
+
+					// Output was not spent, append this transaction to the list of unspent transactions belonging to this user/address
+					if out.CanBeUnlockedWith(address) {
+						unspentTXs = append(unspentTXs, *tx)
+					}
+				}
+				if tx.IsCoinBase() == false {
+					for _, in := range tx.Vin {
+						if in.CanUnlockOutputWith(address) {
+							inTxID := hex.EncodeToString(tx.ID)
+							spentTXOs[inTxID] = append(spentTXOs[inTxID], in.Vout)
+						}
+
+					}
+				}
+		}
+
+		if len(block.PrevBlockHash) == 0 {
+			break
+		}
+	}
+
+	return unspentTXs
+}
+
+func (bc *Blockchain) FindUTXO(address string) []transaction.TXOutput {
+	var UTXOs []transaction.TXOutput
+	unspentTransactions := bc.FindUnspentTransactions(address)
+
+	for _, tx := range unspentTransactions {
+		for _, out := range tx.Vout {
+			if out.CanBeUnlockedWith(address) {
+				UTXOs = append(UTXOs, out)
+			}
+		}
+	}
+
+	return UTXOs
 }

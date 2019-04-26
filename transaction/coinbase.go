@@ -24,3 +24,9 @@ func NewCoinbaseTX(to, data string) *Transaction {
 
 	return &tx
 }
+
+
+// Simple checker to see if a transaction is a Coinbase transaction
+func (tx *Transaction) IsCoinBase() bool {
+	return len(tx.Vin) == 1 && len(tx.Vin[0].Txid) == 0 && tx.Vin[0].Vout == -1
+}

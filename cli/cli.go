@@ -18,19 +18,19 @@ func (cli *CLI) createBlockchain(address string) {
 	fmt.Println("Done!")
 }
 
-//func (cli *CLI) getBalance(address string) {
-//	bc := blockchain.NewBlockchain(address)
-//	defer bc.Db.Close()
-//
-//	balance := 0
-//	UTXOs := bc.FindUTXO(address)
-//
-//	for _, out := range UTXOs {
-//		balance += out.Value
-//	}
-//
-//	fmt.Printf("Balance of '%s': %d\n", address, balance)
-//}
+func (cli *CLI) getBalance(address string) {
+	bc := blockchain.ContinueBlockchain()
+	defer bc.Db.Close()
+
+	balance := 0
+	UTXOs := bc.FindUTXO(address)
+
+	for _, out := range UTXOs {
+		balance += out.Value
+	}
+
+	fmt.Printf("Balance of '%s': %d\n", address, balance)
+}
 
 func (cli *CLI) printUsage() {
 	fmt.Println("Usage:")
@@ -48,7 +48,7 @@ func (cli *CLI) validateArgs() {
 }
 
 func (cli *CLI) printChain() {
-	bc := blockchain.NewBlockchain()
+	bc := blockchain.ContinueBlockchain()
 	defer bc.Db.Close()
 
 	bci := bc.Iterator()
@@ -69,7 +69,7 @@ func (cli *CLI) printChain() {
 }
 
 //func (cli *CLI) send(from, to string, amount int) {
-//	bc := blockchain.NewBlockchain(from)
+//	bc := blockchain.ContinueBlockchain(from)
 //	defer bc.Db.Close()
 //
 //	tx := NewUTXOTransaction(from, to, amount, bc)
@@ -86,7 +86,7 @@ func (cli *CLI) Run() {
 	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
 	printChainCmd := flag.NewFlagSet("printchain", flag.ExitOnError)
 
-	//getBalanceAddress := getBalanceCmd.String("address", "", "The address to get balance for")
+	getBalanceAddress := getBalanceCmd.String("address", "", "The address to get balance for")
 	createBlockchainAddress := createBlockchainCmd.String("address", "", "The address to send genesis block reward to")
 	//sendFrom := sendCmd.String("from", "", "Source wallet address")
 	//sendTo := sendCmd.String("to", "", "Destination wallet address")
@@ -118,13 +118,13 @@ func (cli *CLI) Run() {
 		os.Exit(1)
 	}
 
-	//if getBalanceCmd.Parsed() {
-	//	if *getBalanceAddress == "" {
-	//		getBalanceCmd.Usage()
-	//		os.Exit(1)
-	//	}
-	//	cli.getBalance(*getBalanceAddress)
-	//}
+	if getBalanceCmd.Parsed() {
+		if *getBalanceAddress == "" {
+			getBalanceCmd.Usage()
+			os.Exit(1)
+		}
+		cli.getBalance(*getBalanceAddress)
+	}
 
 	if createBlockchainCmd.Parsed() {
 		if *createBlockchainAddress == "" {

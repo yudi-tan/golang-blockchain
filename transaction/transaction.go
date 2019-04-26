@@ -46,3 +46,11 @@ func (tx *Transaction) SetID() {
 	hash = sha256.Sum256(encoded.Bytes())
 	tx.ID = hash[:]
 }
+
+func (in *TXInput) CanUnlockOutputWith(unlockingData string) bool {
+	return in.ScriptSig == unlockingData
+}
+
+func (out *TXOutput) CanBeUnlockedWith(unlockingData string) bool {
+	return out.ScriptPubKey == unlockingData
+}
