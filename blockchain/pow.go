@@ -11,7 +11,7 @@ import (
 
 // Mining Difficulty, represents the number of leading 0's in the final hash of a block, changes from time to time.
 // For simplicity sake, won't implement target adjusting algorithm, only use a constant.
-const targetBits = 22
+const targetBits = 19
 const maxNonce = math.MaxInt64
 
 // Proof Of Work struct encapsulating a block and the target it must achieve to be considered valid.

@@ -54,3 +54,4 @@ func (in *TXInput) CanUnlockOutputWith(unlockingData string) bool {
 func (out *TXOutput) CanBeUnlockedWith(unlockingData string) bool {
 	return out.ScriptPubKey == unlockingData
 }
+

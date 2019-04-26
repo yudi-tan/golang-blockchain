@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/yuditan/go-blockchain/blockchain"
+	"github.com/yuditan/go-blockchain/transaction"
 	"log"
 	"os"
 	"strconv"
@@ -68,14 +69,14 @@ func (cli *CLI) printChain() {
 	}
 }
 
-//func (cli *CLI) send(from, to string, amount int) {
-//	bc := blockchain.ContinueBlockchain(from)
-//	defer bc.Db.Close()
-//
-//	tx := NewUTXOTransaction(from, to, amount, bc)
-//	bc.MineBlock([]*Transaction{tx})
-//	fmt.Println("Success!")
-//}
+func (cli *CLI) send(from, to string, amount int) {
+	bc := blockchain.ContinueBlockchain()
+	defer bc.Db.Close()
+
+	tx := blockchain.NewUTXOTransaction(from, to, amount, bc)
+	bc.MineBlock([]*transaction.Transaction{tx})
+	fmt.Println("Success!")
+}
 
 // Run parses command line arguments and processes commands
 func (cli *CLI) Run() {
@@ -88,9 +89,9 @@ func (cli *CLI) Run() {
 
 	getBalanceAddress := getBalanceCmd.String("address", "", "The address to get balance for")
 	createBlockchainAddress := createBlockchainCmd.String("address", "", "The address to send genesis block reward to")
-	//sendFrom := sendCmd.String("from", "", "Source wallet address")
-	//sendTo := sendCmd.String("to", "", "Destination wallet address")
-	//sendAmount := sendCmd.Int("amount", 0, "Amount to send")
+	sendFrom := sendCmd.String("from", "", "Source wallet address")
+	sendTo := sendCmd.String("to", "", "Destination wallet address")
+	sendAmount := sendCmd.Int("amount", 0, "Amount to send")
 
 	switch os.Args[1] {
 	case "getbalance":
@@ -138,12 +139,12 @@ func (cli *CLI) Run() {
 		cli.printChain()
 	}
 
-	//if sendCmd.Parsed() {
-	//	if *sendFrom == "" || *sendTo == "" || *sendAmount <= 0 {
-	//		sendCmd.Usage()
-	//		os.Exit(1)
-	//	}
-	//
-	//	cli.send(*sendFrom, *sendTo, *sendAmount)
-	//}
+	if sendCmd.Parsed() {
+		if *sendFrom == "" || *sendTo == "" || *sendAmount <= 0 {
+			sendCmd.Usage()
+			os.Exit(1)
+		}
+
+		cli.send(*sendFrom, *sendTo, *sendAmount)
+	}
 }
